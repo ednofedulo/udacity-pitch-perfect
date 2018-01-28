@@ -17,19 +17,23 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     
     var audioRecorder: AVAudioRecorder!
     
+    let fileName = "recordedVoice.wav"
+    let recordingText = "Recording..."
+    let tapToRecordText = "Tap to record"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI(false)
     }
     
     func startRecording() {
-        recordLabel.text = "Recording..."
+        recordLabel.text = recordingText
         stopRecordButton.isEnabled = true
         recordButton.isEnabled = false
     }
     
     func stopRecording() {
-        recordLabel.text = "Tap to record"
+        recordLabel.text = tapToRecordText
         stopRecordButton.isEnabled = false
         recordButton.isEnabled = true
     }
@@ -46,7 +50,7 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
         
         configureUI(true)
         
-        let filePath = setAudioFile("recordedVoice.wav")
+        let filePath = setAudioFile(fileName)
         
         let session = AVAudioSession.sharedInstance()
         try! session.setCategory(AVAudioSessionCategoryPlayAndRecord, with:AVAudioSessionCategoryOptions.defaultToSpeaker)
@@ -79,7 +83,7 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
         if flag {
             performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
         } else {
-            print("error recording")
+            showAlert(Utils.Alerts.RecordingFailedTitle, message: Utils.Alerts.RecordingFailedMessage)
         }
     }
     
@@ -89,6 +93,11 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
             let recordedAudioURL = sender as! URL
             playSoundsVC.recordedAudioURL = recordedAudioURL
         }
+    }
+    
+    func showAlert(_ title: String, message: String) {
+        let alert = Utils.createAlert(title, message: message)
+        present(alert, animated: true, completion: nil)
     }
 }
 
